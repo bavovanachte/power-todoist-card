@@ -108,7 +108,7 @@ This card can be configured using Lovelace UI editor.
           -H 'Accept: application/json' | jq '.results'
       )"
     ```
-4. In that `secrets.yaml`, replace two instances of `TODOIST_API_TOKEN` with your private [API Token](https://todoist.com/prefs/integrations) (click `Developer` tab on that page).
+4. In that `secrets.yaml`, replace two instances of `TODOIST_API_TOKEN` with your private [API Token](https://app.todoist.com/app/settings/integrations/developer).
 5. Reload configs or restart Home Assistant.
 6. In Lovelace UI, click 3 dots in top-right corner.
 7. Click _Edit Dashboard_.
@@ -344,6 +344,7 @@ That was a lot of work 😅! If you enjoy and use this card, I'd appreciate it i
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/pgorod)
 
 Note that you pick a one-time amount and select any value you want.
+
 
 
 
