@@ -38,59 +38,59 @@ This card can be configured using Lovelace UI editor.
 
 1. Add the following code to `configuration.yaml`:
     ```yaml
-   sensor:
-     # Full project (v1 /projects/<id>/full)
-     # Link this name in the card(s) as... entity: sensor.main_sensor_name
-     - name: main_sensor_name
-       platform: rest
-       unique_id: main_sensor_name
-       method: GET
-       resource: "https://api.todoist.com/api/v1/projects/TODOIST_PROJECT_ID/full"
-       headers:
-         Authorization: !secret todoist_api_token     # must include "Bearer <token>" inside the secret
-         Accept: application/json
-       value_template: "{{ value_json.project.id }}"
-       json_attributes:
-         - project
-         - tasks
-         - sections
-       scan_interval: 30
-   
-     # Project comments (formerly project_notes)
-     # Link this name in the card(s) as... comments_entity: sensor.comments_sensor
-     - name: comments_sensor
-       platform: rest
-       unique_id: comments_sensor
-       method: GET
-       resource: "https://api.todoist.com/api/v1/comments"
-       params:
-         project_id: "TODOIST_PROJECT_ID"
-       headers:
-         Authorization: !secret todoist_api_token
-         Accept: application/json
-       value_template: "{{ value_json.results | length }}"
-       json_attributes:
-         - results
-       scan_interval: 10
-   
-   command_line:
-    - sensor:
-        name: label_colors
-        command: !secret todoist_cmd_with_api_token
-        value_template: >
-          {{ value_json.label_colors | length }}
+    sensor:
+      # Full project (v1 /projects/<id>/full)
+      # Link this name in the card(s) as... entity: sensor.main_sensor_name
+      - name: main_sensor_name
+        platform: rest
+        unique_id: main_sensor_name
+        method: GET
+        resource: "https://api.todoist.com/api/v1/projects/TODOIST_PROJECT_ID/full"
+        headers:
+          Authorization: !secret todoist_api_token     # must include "Bearer <token>" inside the secret
+          Accept: application/json
+        value_template: "{{ value_json.project.id }}"
         json_attributes:
-          - label_colors
-        scan_interval: 200
-   
-   rest_command:
-     todoist:
-       method: post
-       url: 'https://api.todoist.com/api/v1/{{ url }}'
-       payload: '{{ payload }}'
-       headers:
-         Authorization: !secret todoist_api_token
-       content_type: 'application/x-www-form-urlencoded'
+          - project
+          - tasks
+          - sections
+        scan_interval: 30
+    
+      # Project comments (formerly project_notes)
+      # Link this name in the card(s) as... comments_entity: sensor.comments_sensor
+      - name: comments_sensor
+        platform: rest
+        unique_id: comments_sensor
+        method: GET
+        resource: "https://api.todoist.com/api/v1/comments"
+        params:
+          project_id: "TODOIST_PROJECT_ID"
+        headers:
+          Authorization: !secret todoist_api_token
+          Accept: application/json
+        value_template: "{{ value_json.results | length }}"
+        json_attributes:
+          - results
+        scan_interval: 10
+    
+    command_line:
+      - sensor:
+          name: label_colors
+          command: !secret todoist_cmd_with_api_token
+          value_template: >
+            {{ value_json.label_colors | length }}
+          json_attributes:
+            - label_colors
+          scan_interval: 200
+    
+    rest_command:
+      todoist:
+        method: post
+        url: 'https://api.todoist.com/api/v1/{{ url }}'
+        payload: '{{ payload }}'
+        headers:
+          Authorization: !secret todoist_api_token
+        content_type: 'application/x-www-form-urlencoded'
     ```
     👉 The REST command and the `label_colors` sensor are constant and need to be defined only once for each Todoist account used (I recommend using only one and handling any content separation with cleverly filtered projects, sections, and labels).
     
@@ -344,6 +344,7 @@ That was a lot of work 😅! If you enjoy and use this card, I'd appreciate it i
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/pgorod)
 
 Note that you pick a one-time amount and select any value you want.
+
 
 
 
