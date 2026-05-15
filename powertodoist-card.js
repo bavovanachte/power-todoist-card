@@ -194,23 +194,16 @@ class PowerTodoistCardEditor extends LitElement {
         })}
                 </ha-select>
             </div>
-            <div class="option">
-                <ha-select
-                    naturalMenuWidth
-                    fixedMenuPosition
-                    label="Number of completed tasks shown at the end of the list (0 to disable)"
-                    @selected=${this.valueChanged}
-                    @closed=${(event) => event.stopPropagation()}
-                    .configValue=${'show_completed'}
-                    .value=${this._show_completed}
-                >
-                    ${completedCount.map(count => {
-            return html`<mwc-list-item .value="${count}">${count}</mwc-list-item>`;
-        })}
-                </ha-select>
-            </div>
-           
-            <div class="option">
+            <ha-expansion-panel header="Display" outlined>
+                <div class="option">
+                    <ha-input
+                        label="Friendly name"
+                        .value=${this.config.friendly_name || ''}
+                        .configValue=${'friendly_name'}
+                        @input=${this.valueChanged}
+                    ></ha-input>
+                </div>
+                <div class="option">
                 <ha-switch
                     .checked=${(this.config.show_header === undefined) || (this.config.show_header !== false)}
                     .configValue=${'show_header'}
@@ -218,65 +211,175 @@ class PowerTodoistCardEditor extends LitElement {
                 >
                 </ha-switch>
                 <span>Show header</span>
-            </div>
-            <div class="option">
-                <ha-switch
-                    .checked=${(this.config.show_item_add === undefined) || (this.config.show_item_add !== false)}
-                    .configValue=${'show_item_add'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>Show text input element for adding new tasks to the list</span>
-            </div>
-            <div class="option">
-                <ha-switch
-                    .checked=${(this.config.use_quick_add !== undefined) && (this.config.use_quick_add !== false)}
-                    .configValue=${'use_quick_add'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>
-                    Use the <a target="_blank" href="https://todoist.com/help/articles/task-quick-add">Quick Add</a> implementation, available in the official Todoist clients
-                </span>
-            </div>
-            <div class="option" style="font-size: 0.7rem; margin: -12px 0 0 45px">
-                <span>
-                    Check your <a target="_blank" href="https://github.com/grinstantin/todoist-card#using-the-card">configuration</a> before using this option
-                </span>
-            </div>
-            <div class="option">
-                <ha-switch
-                    .checked=${(this.config.show_item_close === undefined) || (this.config.show_item_close !== false)}
-                    .configValue=${'show_item_close'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>Show "close/complete" and "uncomplete" buttons</span>
-            </div>
-            <div class="option">
-                <ha-switch
-                    .checked=${(this.config.show_item_delete === undefined) || (this.config.show_item_delete !== false)}
-                    .configValue=${'show_item_delete'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>Show "delete" buttons</span>
-            </div>
-            <div class="option">
-                <ha-switch
-                    .checked=${(this.config.filter_today_overdue !== undefined) && (this.config.filter_today_overdue !== false)}
-                    .configValue=${'filter_today_overdue'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>Only show today or overdue</span>
-            </div>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_item_description === undefined) || (this.config.show_item_description !== false)}
+                        .configValue=${'show_item_description'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show item description</span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_item_labels === undefined) || (this.config.show_item_labels !== false)}
+                        .configValue=${'show_item_labels'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show item labels</span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_card_labels === undefined) || (this.config.show_card_labels !== false)}
+                        .configValue=${'show_card_labels'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show card labels</span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_dates === undefined) || (this.config.show_dates !== false)}
+                        .configValue=${'show_dates'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show due dates</span>
+                </div>
+                <div class="option">
+                    <ha-select
+                        naturalMenuWidth
+                        fixedMenuPosition
+                        label="Number of completed tasks shown at the end of the list (0 to disable)"
+                        @selected=${this.valueChanged}
+                        @closed=${(event) => event.stopPropagation()}
+                        .configValue=${'show_completed'}
+                        .value=${this._show_completed}
+                    >
+                        ${completedCount.map(count => {
+                return html`<mwc-list-item .value="${count}">${count}</mwc-list-item>`;
+            })}
+                    </ha-select>
+                </div>
+                <div class="option">
+                    <ha-select
+                        naturalMenuWidth
+                        fixedMenuPosition
+                        label="Sort by due date"
+                        @selected=${this.valueChanged}
+                        @closed=${(event) => event.stopPropagation()}
+                        .configValue=${'sort_by_due_date'}
+                        .value=${this.config.sort_by_due_date || ''}
+                    >
+                        <mwc-list-item value="">None</mwc-list-item>
+                        <mwc-list-item value="ascending">Ascending</mwc-list-item>
+                        <mwc-list-item value="descending">Descending</mwc-list-item>
+                    </ha-select>
+                </div>
+                <div class="option">
+                    <ha-input
+                        label="Date format"
+                        .value=${this.config.date_format || ''}
+                        .configValue=${'date_format'}
+                        @input=${this.valueChanged}
+                    ></ha-input>
+                </div>
+            </ha-expansion-panel>
+            <ha-expansion-panel header="User interaction" outlined>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_item_add === undefined) || (this.config.show_item_add !== false)}
+                        .configValue=${'show_item_add'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show text input element for adding new tasks to the list</span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.use_quick_add !== undefined) && (this.config.use_quick_add !== false)}
+                        .configValue=${'use_quick_add'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>
+                        Use the <a target="_blank" href="https://todoist.com/help/articles/task-quick-add">Quick Add</a> implementation, available in the official Todoist clients
+                    </span>
+                </div>
+                <div class="option" style="font-size: 0.7rem; margin: -12px 0 0 45px">
+                    <span>
+                        Check your <a target="_blank" href="https://github.com/grinstantin/todoist-card#using-the-card">configuration</a> before using this option
+                    </span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_item_close === undefined) || (this.config.show_item_close !== false)}
+                        .configValue=${'show_item_close'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show "close/complete" and "uncomplete" buttons</span>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.show_item_delete === undefined) || (this.config.show_item_delete !== false)}
+                        .configValue=${'show_item_delete'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show "delete" buttons</span>
+                </div>
+            </ha-expansion-panel>
+            <ha-expansion-panel header="Filtering" outlined>
+                <div class="option">
+                    <ha-input
+                        label="Section filter (name)"
+                        .value=${this.config.filter_section || ''}
+                        .configValue=${'filter_section'}
+                        @input=${this.valueChanged}
+                    ></ha-input>
+                </div>
+                <div class="option">
+                    <ha-input
+                        label="Section filter (ID)"
+                        .value=${this.config.filter_section_id || ''}
+                        .configValue=${'filter_section_id'}
+                        @input=${this.valueChanged}
+                    ></ha-input>
+                </div>
+                <div class="option">
+                    <ha-input
+                        label="Filter labels (comma separated)"
+                        .value=${this.config.filter_labels || ''}
+                        .configValue=${'filter_labels'}
+                        @input=${this.valueChanged}
+                    ></ha-input>
+                </div>
+                <div class="option">
+                    <ha-switch
+                        .checked=${(this.config.filter_today_overdue !== undefined) && (this.config.filter_today_overdue !== false)}
+                        .configValue=${'filter_today_overdue'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Only show today or overdue</span>
+                </div>
+            </ha-expansion-panel>
+            
+            
+            
+            
         </div>`;
     }
 
     static get styles() {
         return css`
             .card-config ha-select {
+                width: 100%;
+            }
+            .card-config ha-input {
                 width: 100%;
             }
            
