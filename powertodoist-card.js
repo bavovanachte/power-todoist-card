@@ -50,6 +50,14 @@ class PowerTodoistCardEditor extends LitElement {
         };
     }
 
+    get _friendly_name() {
+        if (this.config) {
+            return this.config.friendly_name || '';
+        }
+
+        return '';
+    }
+
     get _entity() {
         if (this.config) {
             return this.config.entity || '';
@@ -72,6 +80,38 @@ class PowerTodoistCardEditor extends LitElement {
 
         return true;
     }
+    get _show_item_description() {
+        if (this.config) {
+            return this.config.show_item_description || true;
+        }
+
+        return true;
+    }
+
+    get _show_item_labels() {
+        if (this.config) {
+            return this.config.show_item_labels || true;
+        }
+
+        return true;
+    }
+
+    get _show_card_labels() {
+        if (this.config) {
+            return this.config.show_card_labels || true;
+        }
+
+        return true;
+    }
+
+    get _show_dates() {
+        if (this.config) {
+            return this.config.show_dates || false;
+        }
+
+        return false;
+    }
+
     get _show_item_add() {
         if (this.config) {
             return this.config.show_item_add || true;
@@ -133,16 +173,19 @@ class PowerTodoistCardEditor extends LitElement {
     }
 
     valueChanged(e) {
+        const value = e.detail?.value ?? e.target.value; // support both ha-select and other inputs
+        const configValue = e.target.configValue;
+    
         if (
-            !this.config
-            || !this.hass
-            || (this[`_${e.target.configValue}`] === e.target.value)
+            !this.config 
+            || !this.hass 
+            || (this[`_${e.target.configValue}`] === value)
         ) {
             return;
         }
 
         if (e.target.configValue) {
-            if (e.target.value === '') {
+            if (value === '' || value === undefined) {
                 if (!['entity', 'show_completed'].includes(e.target.configValue)) {
                     delete this.config[e.target.configValue];
                 }
@@ -151,7 +194,7 @@ class PowerTodoistCardEditor extends LitElement {
                     ...this.config,
                     [e.target.configValue]: e.target.checked !== undefined
                         ? e.target.checked
-                        : this.isNumeric(e.target.value) ? parseFloat(e.target.value) : e.target.value,
+                        : this.isNumeric(value) ? parseFloat(value) : value,
                 };
             }
         }
@@ -173,6 +216,9 @@ class PowerTodoistCardEditor extends LitElement {
 
     render() {
         if (!this.hass) {
+            return html``;
+        }
+        if (!this.config) {
             return html``;
         }
 
@@ -204,13 +250,13 @@ class PowerTodoistCardEditor extends LitElement {
                     ></ha-input>
                 </div>
                 <div class="option">
-                <ha-switch
-                    .checked=${(this.config.show_header === undefined) || (this.config.show_header !== false)}
-                    .configValue=${'show_header'}
-                    @change=${this.valueChanged}
-                >
-                </ha-switch>
-                <span>Show header</span>
+                    <ha-switch
+                        .checked=${(this.config.show_header === undefined) || (this.config.show_header !== false)}
+                        .configValue=${'show_header'}
+                        @change=${this.valueChanged}
+                    >
+                    </ha-switch>
+                    <span>Show header</span>
                 </div>
                 <div class="option">
                     <ha-switch
@@ -250,17 +296,12 @@ class PowerTodoistCardEditor extends LitElement {
                 </div>
                 <div class="option">
                     <ha-select
-                        naturalMenuWidth
-                        fixedMenuPosition
                         label="Number of completed tasks shown at the end of the list (0 to disable)"
                         @selected=${this.valueChanged}
-                        @closed=${(event) => event.stopPropagation()}
                         .configValue=${'show_completed'}
-                        .value=${this._show_completed}
+                        .value=${String(this._show_completed)}
+                        .options=${completedCount.map(count => String(count))}
                     >
-                        ${completedCount.map(count => {
-                return html`<mwc-list-item .value="${count}">${count}</mwc-list-item>`;
-            })}
                     </ha-select>
                 </div>
                 <div class="option">
@@ -420,7 +461,7 @@ class PowerTodoistCard extends LitElement {
     _lpTimer = null; // Timer ID for long press - tracks if long press is active
     _clickTimer = null; // Timer ID for single click delay - prevents premature single-click firing
     _clickCount = 0; // Counts clicks (0, 1, or 2) to detect single vs double click
-    
+
     _lpStart(item, longPressActionName) {
         // Start long press timer
         this._lpTimer = setTimeout(() => {
@@ -1360,7 +1401,7 @@ class PowerTodoistCard extends LitElement {
                             ><span class="powertodoist-item-content ${(this.itemsEmphasized[item.id]) ? css`powertodoist-special` : css``}" >
                             ${item.content}</span></div>
                             ${(this.myConfig.show_item_description ?? true) && item.description?.trim()
-    //                      ${((this.myConfig.show_item_description === undefined) || (this.myConfig.show_item_description !== false)) && item.description
+                            //                      ${((this.myConfig.show_item_description === undefined) || (this.myConfig.show_item_description !== false)) && item.description
                             ? html`<div
                                     @pointerdown=${(e) => this._lpStart(item, "longpress_description")}
                                     @pointerup=${(e) => this._lpEnd(item, "description", "dbl_description")}
